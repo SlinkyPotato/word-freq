@@ -48,14 +48,20 @@ procedure main  is
    function word_less_than_equal(a: Word; b: Word) return Boolean is
    begin
       for i in 1 .. a.wlen loop
-         if (a.s(i) = b.s(i)) then
-            Continue;
-         elsif (a.s(1) <= b.s(1)) then
+         if (a.s < b.s) then
+            put("True:"); new_line;
+            put("a: " & a.s); new_line;
+            put("b: " & b.s); new_line;
             return True;
-         else
+         end if;
+         if (a.s > b.s) then
+            put("False:"); new_line;
+            put("a: " & a.s); new_line;
+            put("b: " & b.s); new_line;
             return False;
          end if;
       end loop;
+      return False;
       end word_less_than_equal;
 
    procedure quicksort(words: in out Word_Array; lo: Integer; hi: Integer) is
@@ -75,8 +81,11 @@ procedure main  is
       end word_less_than_equal;
 
       procedure swap_words(a: in out Word; b: in out Word) is
+         tmp_word: Word;
       begin
-         Put("Hello");
+         tmp_word:= a;
+         a:= b;
+         b:= tmp_word;
       end;
 
       -- Quicksort helper which is the partition function
@@ -87,7 +96,7 @@ procedure main  is
          pivot:= words(hi);
          i:= lo - 1;
          for j in lo .. (hi - 1) loop
-            if word_less_than_equal(words(j), pivot) then
+            if (words(j).s <= pivot.s) then
                i:= i + 1;
                swap_words(words(i), words(j));
             end if;
@@ -115,10 +124,8 @@ procedure main  is
    end put_words;
 
    the_words: Word_List;
-   is_less_equal: Boolean;
 begin
    get_words(the_words);
-   is_less_equal:= word_less_than_equal(the_words.words(1), the_words.words(2));
-   --quicksort(the_words.words, 1, the_words.num_words);
+   quicksort(the_words.words, 1, the_words.num_words);
    put_words(the_words);
 end;
