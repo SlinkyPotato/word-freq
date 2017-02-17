@@ -65,21 +65,7 @@ procedure main  is
       end word_less_than_equal;
 
    procedure quicksort(words: in out Word_Array; lo: Integer; hi: Integer) is
-
-      -- Return true if a <= b, else false
-      function word_less_than_equal(a: Word; b: Word) return Boolean is
-         counter: Integer;
-      begin
-         -- for i in 1 .. a.wlen loop
-         -- if (a.s
-         counter:= 0;
-         if (a.s(1) <= b.s(1)) then
-            return True;
-         else
-            return False;
-         end if;
-      end word_less_than_equal;
-
+      -- Swap word a with word b
       procedure swap_words(a: in out Word; b: in out Word) is
          tmp_word: Word;
       begin
