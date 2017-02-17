@@ -1,0 +1,28 @@
+V "GNAT Lib v2016"
+M P W=b
+A -gnatA
+A -mtune=generic
+A -march=pentium4
+P ZX
+
+RN
+RV NO_IMPLEMENTATION_PRAGMAS
+RV SPARK_05
+
+U test%b		test.adb		f215c977 NE OO SU IL
+W gnat%s		gnat.ads		gnat.ali
+W gnat.io%s		g-io.adb		g-io.ali
+
+D gnat.ads		20160516092932 fd2ad2f1 gnat%s
+D g-io.ads		20160516092926 9f0d3ab2 gnat.io%s
+D system.ads		20160516092930 2da59038 system%s
+D test.adb		20170217165542 6d18f3c5 test%b
+X 1 gnat.ads
+34K9*GNAT 37e9 4|2r6 2r19
+X 2 g-io.ads
+41K14*IO 91e12 4|2w11 2r24
+72U14*Put_Line 4|5s4
+77U14*New_Line 4|6s4
+X 4 test.adb
+3U11*test 3b11 7t4
+

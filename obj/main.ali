@@ -1,0 +1,113 @@
+V "GNAT Lib v2016"
+M P W=b
+A -gnatA
+A -mtune=generic
+A -march=pentium4
+P SS ZX
+
+RN
+RV NO_IO
+RV NO_RECURSION
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLICIT_LOOPS
+RV SPARK_05
+
+U main%b		main.adb		fe5bf056 NE OO SU IL
+W ada%s			ada.ads			ada.ali
+W ada.integer_text_io%s	a-inteio.ads		a-inteio.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W interfaces%s		interfac.ads		interfac.ali
+W system.concat_2%s	s-conca2.adb		s-conca2.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+D ada.ads		20160516092928 3ffc8e18 ada%s
+D a-except.ads		20160516092928 291912d5 ada.exceptions%s
+D a-inteio.ads		20160516092932 f64b89a4 ada.integer_text_io%s
+D a-ioexce.ads		20160516092926 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20160516092928 119b8fb3 ada.streams%s
+D a-tags.ads		20160516092932 01f5e3ef ada.tags%s
+D a-textio.ads		20160516092932 386df5d4 ada.text_io%s
+D a-tiinio.ads		20160516092928 aa04e5d6 ada.text_io.integer_io%s
+D a-unccon.ads		20160516092930 f9eb8f06 ada.unchecked_conversion%s
+D interfac.ads		20160516092928 5ab55268 interfaces%s
+D i-cstrea.ads		20160516092926 e53d8b8e interfaces.c_streams%s
+D main.adb		20170217190608 307d8c26 main%b
+D system.ads		20160516092930 2da59038 system%s
+D s-conca2.ads		20160516092930 02a0d7d0 system.concat_2%s
+D s-crtl.ads		20160516092926 0ebbdb71 system.crtl%s
+D s-exctab.ads		20160516092930 54135002 system.exception_table%s
+D s-ficobl.ads		20160516092932 078245e4 system.file_control_block%s
+D s-parame.ads		20160516092932 7e2a0d7f system.parameters%s
+D s-secsta.ads		20160516092930 86a2856d system.secondary_stack%s
+D s-soflin.ads		20160516092928 14e1eb6c system.soft_links%s
+D s-stache.ads		20160516092932 a37c21ec system.stack_checking%s
+D s-stalib.ads		20160516092930 09bd3940 system.standard_library%s
+D s-stoele.ads		20160516092932 2dc34a04 system.storage_elements%s
+D s-traent.ads		20160516092928 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20160516092930 34867c83 system.unsigned_types%s
+D s-wchcon.ads		20160516092930 1b7d22d2 system.wch_con%s
+X 1 ada.ads
+16K9*Ada 19e8 12|4r6 4r31 5r6 5r23
+X 3 a-inteio.ads
+18K13*Integer_Text_IO[8|46] 12|4w10 4r35
+X 7 a-textio.ads
+49K13*Text_IO 471e16 12|5w10 5r27
+166U14*New_Line 12|55s33 56s42 57s42 60s34 61s41 62s41 119s10
+184V13*End_Of_File{boolean} 12|24s17
+242U14*Put 12|55s10 56s10 57s10 60s10 61s10 62s10 85s10 118s10
+256V13*Get_Line{string} 12|26s26
+X 8 a-tiinio.ads
+66U14*Put 12|117s10[3|18]
+X 12 main.adb
+7U11*main 7b11 130t4
+8R9 Word 12e14 14r43 48r40 48r49 70r40 70r49 83r38 83r54 90r17
+9a7 s{string} 30r35 39m39 54r13 54r23 56r26 57r26 61r26 62r26 76r16 76r26
+. 118r32
+10i7 wlen{natural} 30r54 40m39 118r51
+11i7 count{natural} 31m31 31r52 41m39 117r26
+14A9 Word_Array(8R9)<integer> 17r14 67r38 89r40
+16R9 Word_List 19e14 21r32 114r28 123r15
+17a7 words{14A9} 30r26 30r45 31m22 31r43 39m19 40m19 41m19 117m17 118r23
+. 118r42 127r51 127r71
+18i7 num_words{natural} 23m10 29r30 38m19 38r35 39r28 40r28 41r28 116r24
+21U14 get_words 21b14 21<24 45l8 45t17 126s4
+21r24 wl{16R9} 23m7 29r27 30r23 30r42 31m19 31r40 38m16 38r32 39m16 39r25
+. 40m16 40r25 41m16 41r25
+26a13 s{string} 30r19 39r46 39r57 40r47
+27b13 found{boolean} 32m19 34r26 37r20
+29i17 i{integer} 30r32 30r51 31r28 31r49
+48V16 word_less_than_equal{boolean} 48b16 48>37 48>46 65l11 65t31 127s20
+48r37 a{8R9} 54r11 56r24 61r24
+48r46 b{8R9} 54r21 57r24 62r24
+49i7 counter{integer} 53m10
+67U14 quicksort 67b14 67=24 67>50 67>63 109s10 110s10 112l8 112t17
+67a24 words{14A9} 108m24 108r24 109m20 110m20
+67i50 lo{integer} 107r10 108r31 109r27
+67i63 hi{integer} 107r15 108r35 110r34
+70V16 word_less_than_equal{boolean} 70b16 70>37 70>46 81l11 81t31 96s16
+70r37 a{8R9} 76r14
+70r46 b{8R9} 76r24
+71i10 counter{integer} 75m10
+83U17 swap_words 83b17 83=28 83=44 86t10 98s16 101s10
+83r28 a{8R9}
+83r44 b{8R9}
+89V16 partition{integer} 89b16 89=26 89>52 89>65 103t10 108s14
+89a26 words{14A9} 93r18 96r37 98m27 98r27 98m37 98r37 101m21 101r21 101m33
+. 101r33
+89i52 lo{integer} 94r14 95r19
+89i65 hi{integer} 93r24 95r26 101r39
+90r10 pivot{8R9} 93m10 96r47
+91i10 i{integer} 94m10 97m16 97r20 98r33 101r27 102r18
+95i14 j{integer} 96r43 98r43
+105i7 p{integer} 108m10 109r31 110r27
+114U14 put_words 114b14 114>24 121l8 121t17 129s4
+114r24 wl{16R9} 116r21 117r14 118r20 118r39
+116i11 i{integer} 117r23 118r29 118r48
+123r4 the_words{16R9} 126m14 127r41 127r61 129r14
+124b4 is_less_equal{boolean} 127m4
+
