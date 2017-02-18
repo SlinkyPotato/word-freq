@@ -44,25 +44,70 @@ procedure main  is
       end loop;
    end get_words;
 
-   -- Return true if a <= b, else false
-   function word_less_than_equal(a: Word; b: Word) return Boolean is
-   begin
-      for i in 1 .. a.wlen loop
-         if (a.s < b.s) then
-            put("True:"); new_line;
-            put("a: " & a.s); new_line;
-            put("b: " & b.s); new_line;
-            return True;
+   -- Strip any spaces from the word list
+   procedure strip_spaces(words: in out Word_List) is
+      -- Insert a new or repeated word
+      procedure insert_word(new_word: Word; words: out Word_List) is
+         found: Boolean:= False;
+         matching_count: Natural:= 0;
+      begin
+         -- Check if words list is empty, if so exit
+         if (words.num_words = 0) then
+            words.words(1).s(1 .. new_word.wlen):= new_word.s(1 .. new_word.wlen);
+            words.num_words:= 1;
+            words.words(1).count:= new_word.count;
+            words.words(1).wlen:= new_word.wlen;
+            found:= True;
+         else
+            for i in 1 .. words.num_words loop
+               if (new_word.s = words.words(i).s) then
+                  found:= True;
+                  words.words(i).count:= new_word.count + words.words(i).count;
+               end if;
+            end loop;
          end if;
-         if (a.s > b.s) then
-            put("False:"); new_line;
-            put("a: " & a.s); new_line;
-            put("b: " & b.s); new_line;
-            return False;
+         if not found then
+            words.num_words:= words.num_words + 1;
+            words.words(words.num_words).s(1 .. new_word.wlen):= new_word.s(1 .. new_word.wlen);
+            words.words(words.num_words).wlen:= new_word.wlen;
+            words.words(words.num_words).count:= new_word.count;
+         end if;
+      end insert_word;
+
+      proc_words: Word_List;
+      letterFoundIndex: Natural:= 1;
+      letter_counter: Natural:= 0;
+      found_word: Word;
+      found_length: Natural;
+   begin
+      -- Loop through all lines
+      for i in 1 .. words.num_words loop
+         -- Loop through letters in line
+         for j in 1 .. words.words(i).wlen loop
+            if words.words(i).s(j) = ' ' then
+               found_word.wlen:= j - letterFoundIndex;
+               found_word.s(1 .. words.words(i).s(letterFoundIndex ..
+                            (j - 1))'length):= words.words(i).
+                 s(letterFoundIndex .. (j - 1));
+               found_word.count:= words.words(i).count;
+               insert_word(found_word, proc_words);
+               letterFoundIndex:= j + 1;
+            end if;
+            letter_counter:= letter_counter + 1;
+         end loop;
+         -- After new line
+         if letter_counter > 0 then
+            found_length:= letter_counter - (letterFoundIndex) + 1;
+            found_word.wlen:= found_length;
+            found_word.s(1 .. found_length):= words.words(i).s(letterFoundIndex .. letter_counter);
+            found_word.count:= words.words(i).count;
+            insert_word(found_word, proc_words);
+            letter_counter:= 0;
+            letterFoundIndex:= 1;
          end if;
       end loop;
-      return False;
-      end word_less_than_equal;
+      words:= proc_words;
+   end strip_spaces;
 
    procedure quicksort(words: in out Word_Array; lo: Integer; hi: Integer) is
       -- Swap word a with word b
@@ -109,9 +154,20 @@ procedure main  is
       end loop;
    end put_words;
 
+   procedure print_words(words: Word_List) is
+   begin
+      put("Begin printing words:"); new_line;
+      put(words.words(1).s); new_line;
+      put(words.words(2).s); new_line;
+      put("Number of words: "); put(words.num_words); new_line;
+      --put(words.words(2).s); new_line;
+      --put(words.words(3).s); new_line;
+   end print_words;
+
    the_words: Word_List;
 begin
    get_words(the_words);
+   strip_spaces(the_words);
    quicksort(the_words.words, 1, the_words.num_words);
    put_words(the_words);
 end;
