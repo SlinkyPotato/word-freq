@@ -3,6 +3,7 @@
 -- This is a minimalist version.  No bells or whistles.
 with ada.integer_text_io; use ada.integer_text_io;
 with ada.text_io; use ada.text_io;
+with ada.Characters.Latin_1; use Ada.Characters.Latin_1;
 
 procedure main  is
    type Word is record
@@ -17,6 +18,65 @@ procedure main  is
       words: Word_Array;        --  The unique words
       num_words: Natural := 0;   --  How many unique words seen so far
    end record;
+
+   procedure read_file(wl: out Word_List) is
+      input: File_Type;
+      found_word: Word;
+      is_found: Boolean:= False;
+      is_new_line: Boolean:= False;
+      letter: Character;
+   begin
+      wl.num_words:= 0;
+
+      put("Reading from input.txt..."); new_line;
+      -- Prepare Input file
+      open(File => Input, Mode => Ada.Text_IO.In_File,
+           Name => "input.txt");
+
+      -- Loop through all characters in file
+      while not End_Of_File (input) loop
+         declare
+            is_found: Boolean:= False;
+            letter_counter: Integer:= 1;
+         begin 
+            -- This makes sure the first letter of a new line is obtained
+            if is_new_line then
+               get(File => input,
+                   Item => letter);
+            end if;
+
+            while not End_Of_Line(input) loop
+               if not is_new_line then
+                  get(File => input,
+                      Item => letter);
+               end if;
+               found_word.wlen:= letter_counter;
+               found_word.s(letter_counter):= letter;
+               letter_counter:= letter_counter + 1;
+               is_new_line:= False;
+            end loop;
+
+            -- -- Loop through all known words
+            for i in 1 .. wl.num_words loop
+               if found_word.s(1 .. found_word.wlen) = wl.words(i).s(1 .. wl.words(i).wlen) then
+                  wl.words(i).count:= wl.words(i).count + 1;
+                  is_found:= True;
+               end if;
+               exit when is_found;
+            end loop;
+
+            if not is_found then
+               wl.num_words:= wl.num_words + 1;
+               wl.words(wl.num_words).wlen:= found_word.wlen;
+               wl.words(wl.num_words).s(1 .. found_word.wlen):= found_word.s(1 .. found_word.wlen);
+               wl.words(wl.num_words).count:= 1;
+            end if;
+            letter_counter:= 1;
+            is_new_line:= True;
+         end;
+      end loop;
+      close(input);
+   end read_file;
 
    procedure get_words(wl: out Word_List) is
    begin
@@ -154,20 +214,33 @@ procedure main  is
       end loop;
    end put_words;
 
-   procedure print_words(words: Word_List) is
+   procedure print_file(words: Word_list) is
+      output: File_Type;
+
    begin
-      put("Begin printing words:"); new_line;
-      put(words.words(1).s); new_line;
-      put(words.words(2).s); new_line;
-      put("Number of words: "); put(words.num_words); new_line;
-      --put(words.words(2).s); new_line;
-      --put(words.words(3).s); new_line;
-   end print_words;
+      put("Printing to output.txt...");
+      -- Prepare the output file
+      create(File => output,
+             Name => "output.txt");
+
+      for i in 1 .. words.num_words loop
+         put(File => output,
+             Item => words.words(i).count);
+         put(File => output, Item => " ");
+         put(File => output, Item => words.words(i).s(1 .. words.words(1).wlen));
+         put(File => output, Item => ASCII.CR);
+      end loop;
+
+      close(output);
+
+   end print_file;
+
 
    the_words: Word_List;
 begin
-   get_words(the_words);
+   read_file(the_words);
    strip_spaces(the_words);
    quicksort(the_words.words, 1, the_words.num_words);
    put_words(the_words);
+   print_file(the_words);
 end;
