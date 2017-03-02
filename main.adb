@@ -1,15 +1,17 @@
 -- Read one word per line and print list of unique words and their frequencies
 -- Case sensitive
--- This is a minimalist version.  No bells or whistles.
 with ada.integer_text_io; use ada.integer_text_io;
 with ada.text_io; use ada.text_io;
 with ada.Characters.Latin_1; use Ada.Characters.Latin_1;
 
 procedure main  is
+   type OccurLN is array(1 .. 1000) of Natural;
    type Word is record
       s: String(1 .. 120);  -- The string.  Assume 120 characters or less
       wlen: Natural;        -- Length of the word
       count: Natural := 0;  -- Total number of occurrences of this word
+      occursAtLine: OccurLN;
+      countLN: Natural:= 1;
    end record;
 
    type Word_Array is array(1 .. 1000) of Word;
@@ -25,6 +27,7 @@ procedure main  is
       is_found: Boolean:= False;
       is_new_line: Boolean:= False;
       letter: Character;
+      lineNumber: Natural:= 1;
    begin
       wl.num_words:= 0;
 
@@ -45,6 +48,7 @@ procedure main  is
                    Item => letter);
             end if;
 
+            -- Construct the words from the current line
             while not End_Of_Line(input) loop
                if not is_new_line then
                   get(File => input,
@@ -60,19 +64,26 @@ procedure main  is
             for i in 1 .. wl.num_words loop
                if found_word.s(1 .. found_word.wlen) = wl.words(i).s(1 .. wl.words(i).wlen) then
                   wl.words(i).count:= wl.words(i).count + 1;
+                  wl.words(i).occursAtLine(wl.words(i).countLN):= lineNumber;
+                  wl.words(i).countLN:= wl.words(i).countLN + 1;
                   is_found:= True;
                end if;
                exit when is_found;
             end loop;
 
+            -- Add the new word to the word list
             if not is_found then
                wl.num_words:= wl.num_words + 1;
                wl.words(wl.num_words).wlen:= found_word.wlen;
                wl.words(wl.num_words).s(1 .. found_word.wlen):= found_word.s(1 .. found_word.wlen);
                wl.words(wl.num_words).count:= 1;
+               wl.words(wl.num_words).occursAtLine(wl.words(wl.num_words).countLN):= lineNumber;
+               wl.words(wl.num_words).countLN:= wl.words(wl.num_words).countLN + 1;
+               put_line(wl.words(wl.num_words).countLN'Image);
             end if;
             letter_counter:= 1;
             is_new_line:= True;
+            lineNumber:= lineNumber + 1;
          end;
       end loop;
       close(input);
@@ -216,7 +227,6 @@ procedure main  is
 
    procedure print_file(words: Word_list) is
       output: File_Type;
-
    begin
       put("Printing to output.txt...");
       -- Prepare the output file
@@ -224,23 +234,40 @@ procedure main  is
              Name => "output.txt");
 
       for i in 1 .. words.num_words loop
+         put(File => output, 
+             Item => words.words(i).s(1 .. words.words(1).wlen));
+         put(File => output,
+             Item => ": in lines ");
+         for k in 1 .. words.words(i).countLN loop
+            put_line(words.words(i).countLN'Image);
+            put(File => output,
+                Item => words.words(i).occursAtLine(words.words(i).countLN));
+            put(File => output,
+                Item => "-");
+         end loop;
+         put(File => output,
+             Item => "wc=");
          put(File => output,
              Item => words.words(i).count);
          put(File => output, Item => " ");
-         put(File => output, Item => words.words(i).s(1 .. words.words(1).wlen));
          put(File => output, Item => ASCII.CR);
       end loop;
-
       close(output);
-
    end print_file;
 
+   procedure test_arrays is
+      someNumbers: array(1 .. 100) of Natural;
+   begin
+      someNumbers(1):= 2;
+      someNumbers(1):= 3;
+      put(someNumbers(1));
+   end test_arrays;
 
    the_words: Word_List;
 begin
    read_file(the_words);
    strip_spaces(the_words);
    quicksort(the_words.words, 1, the_words.num_words);
-   put_words(the_words);
+   -- put_words(the_words);
    print_file(the_words);
 end;

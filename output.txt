@@ -1,0 +1,1 @@
+aaa: in lines           0-wc=          6 bbb: in lines           0-wc=          8 ccc: in lines           0-wc=          2 ddd: in lines           0-wc=          6 

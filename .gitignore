@@ -1,4 +1,4 @@
-obj/
+obj/*
 *.exe
 *.ali
 *.o
