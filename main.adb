@@ -11,7 +11,7 @@ procedure main  is
       wlen: Natural;        -- Length of the word
       count: Natural := 0;  -- Total number of occurrences of this word
       occursAtLine: OccurLN;
-      countLN: Natural:= 1;
+      countLN: Natural:= 0;
    end record;
 
    type Word_Array is array(1 .. 1000) of Word;
@@ -64,8 +64,8 @@ procedure main  is
             for i in 1 .. wl.num_words loop
                if found_word.s(1 .. found_word.wlen) = wl.words(i).s(1 .. wl.words(i).wlen) then
                   wl.words(i).count:= wl.words(i).count + 1;
-                  wl.words(i).occursAtLine(wl.words(i).countLN):= lineNumber;
                   wl.words(i).countLN:= wl.words(i).countLN + 1;
+                  wl.words(i).occursAtLine(wl.words(i).countLN):= lineNumber;
                   is_found:= True;
                end if;
                exit when is_found;
@@ -77,9 +77,8 @@ procedure main  is
                wl.words(wl.num_words).wlen:= found_word.wlen;
                wl.words(wl.num_words).s(1 .. found_word.wlen):= found_word.s(1 .. found_word.wlen);
                wl.words(wl.num_words).count:= 1;
-               wl.words(wl.num_words).occursAtLine(wl.words(wl.num_words).countLN):= lineNumber;
                wl.words(wl.num_words).countLN:= wl.words(wl.num_words).countLN + 1;
-               put_line(wl.words(wl.num_words).countLN'Image);
+               wl.words(wl.num_words).occursAtLine(wl.words(wl.num_words).countLN):= lineNumber;
             end if;
             letter_counter:= 1;
             is_new_line:= True;
@@ -121,28 +120,66 @@ procedure main  is
       procedure insert_word(new_word: Word; words: out Word_List) is
          found: Boolean:= False;
          matching_count: Natural:= 0;
+         lnCounter: Natural:= 0;
       begin
          -- Check if words list is empty, if so exit
          if (words.num_words = 0) then
             words.words(1).s(1 .. new_word.wlen):= new_word.s(1 .. new_word.wlen);
             words.num_words:= 1;
             words.words(1).count:= new_word.count;
+            words.words(1).countLN:= new_word.countLN;
+            words.words(1).occursAtLine:= new_word.occursAtLine;
             words.words(1).wlen:= new_word.wlen;
             found:= True;
          else
+            -- put_line("new_word: " & new_word.s(1..4));
             for i in 1 .. words.num_words loop
                if (new_word.s = words.words(i).s) then
+                  -- put_line("  True");
                   found:= True;
                   words.words(i).count:= new_word.count + words.words(i).count;
+                  -- Check if occursAtLine from new_word matches word list
+                  for k in 1 .. words.words(i).countLN loop
+                     for j in 1 .. new_word.countLN loop
+                        if (new_word.occursAtLine(j) = words.words(i).occursAtLine(k)) then
+                           lnCounter:= lnCounter + 1;
+                        end if;
+                     end loop;
+                  end loop;
+                  -- put("word: " & words.words(i).s(1..4));
+                  -- put("lnC:" & lnCounter'Image);
+                  -- put_line(words.words(i).countLN'Image);
+                  if (lnCounter /= new_word.countLN) then
+                     -- put("words.words(i).countLN: ");
+                     -- put_line(words.words(i).countLN'Image);
+                     -- put("new_word.countLN: ");
+                     -- put_line(new_word.countLN'Image);
+                     -- put("total: ");
+                     -- put_line(words.words(i).countLN'Image);
+                     for k in (words.words(i).countLN + 1) .. (words.words(i).countLN + new_word.countLN) loop
+                        -- put(words.words(i).s(1..4));
+                        -- put("k: ");
+                        -- put_line(k'Image);
+                        -- put_line(new_word.occursAtLine(k - words.words(i).countLN)'Image);
+                        words.words(i).occursAtLine(k):= new_word.occursAtLine(k - words.words(i).countLN);
+                     end loop;
+                     words.words(i).countLN:= words.words(i).countLN + new_word.countLN;
+                  end if;
                end if;
             end loop;
          end if;
          if not found then
+            -- put_line(new_word.s(1 .. 4));
+            -- put_line(new_word.countLN'Image);
+            -- put_line(new_word.occursAtLine(1)'Image);
             words.num_words:= words.num_words + 1;
             words.words(words.num_words).s(1 .. new_word.wlen):= new_word.s(1 .. new_word.wlen);
             words.words(words.num_words).wlen:= new_word.wlen;
             words.words(words.num_words).count:= new_word.count;
+            words.words(words.num_words).countLN:= new_word.countLN;
+            words.words(words.num_words).occursAtLine:= new_word.occursAtLine;
          end if;
+         found:= False;
       end insert_word;
 
       proc_words: Word_List;
@@ -153,6 +190,8 @@ procedure main  is
    begin
       -- Loop through all lines
       for i in 1 .. words.num_words loop
+         -- put("word: " & words.words(i).s(1 .. 15));
+         -- put_line(words.words(i).occursAtLine(1)'Image);
          -- Loop through letters in line
          for j in 1 .. words.words(i).wlen loop
             if words.words(i).s(j) = ' ' then
@@ -161,6 +200,8 @@ procedure main  is
                             (j - 1))'length):= words.words(i).
                  s(letterFoundIndex .. (j - 1));
                found_word.count:= words.words(i).count;
+               found_word.countLN:= words.words(i).countLN;
+               found_word.occursAtLine:= words.words(i).occursAtLine;
                insert_word(found_word, proc_words);
                letterFoundIndex:= j + 1;
             end if;
@@ -172,6 +213,12 @@ procedure main  is
             found_word.wlen:= found_length;
             found_word.s(1 .. found_length):= words.words(i).s(letterFoundIndex .. letter_counter);
             found_word.count:= words.words(i).count;
+            found_word.countLN:= words.words(i).countLN;
+            found_word.occursAtLine:= words.words(i).occursAtLine;
+            -- put(found_word.s(1 .. 4));
+            -- put_line(found_word.countLN'Image);
+            -- put_line(found_word.occursAtLine(1)'Image);
+            -- put_line(found_word.occursAtLine(2)'Image);
             insert_word(found_word, proc_words);
             letter_counter:= 0;
             letterFoundIndex:= 1;
@@ -237,30 +284,29 @@ procedure main  is
          put(File => output, 
              Item => words.words(i).s(1 .. words.words(1).wlen));
          put(File => output,
-             Item => ": in lines ");
+             Item => ": in lines");
          for k in 1 .. words.words(i).countLN loop
-            put_line(words.words(i).countLN'Image);
             put(File => output,
-                Item => words.words(i).occursAtLine(words.words(i).countLN));
+                Item => words.words(i).occursAtLine(k)'Image);
             put(File => output,
-                Item => "-");
+                Item => ",");
          end loop;
          put(File => output,
-             Item => "wc=");
-         put(File => output,
-             Item => words.words(i).count);
-         put(File => output, Item => " ");
-         put(File => output, Item => ASCII.CR);
+             Item => " wc =");
+         put_line(File => output,
+             Item => words.words(i).count'Image);
       end loop;
       close(output);
    end print_file;
 
-   procedure test_arrays is
-      someNumbers: array(1 .. 100) of Natural;
+   procedure test_arrays(wl: in out Word_List) is
    begin
-      someNumbers(1):= 2;
-      someNumbers(1):= 3;
-      put(someNumbers(1));
+      for i in 1 .. wl.num_words loop
+         for k in 1 .. wl.words(i).countLN loop
+            put(wl.words(i).occursAtLine(k)'Image);              
+         end loop;
+         put_line(" " & wl.words(i).s(1 .. 20));
+      end loop;
    end test_arrays;
 
    the_words: Word_List;
@@ -268,6 +314,6 @@ begin
    read_file(the_words);
    strip_spaces(the_words);
    quicksort(the_words.words, 1, the_words.num_words);
-   -- put_words(the_words);
+   test_arrays(the_words);
    print_file(the_words);
 end;
